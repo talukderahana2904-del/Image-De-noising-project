@@ -1,0 +1,7 @@
+Method,PSNR,SSIM
+Wiener Filter,29.4398,0.7081
+Gaussian Filter,28.8932,0.6339
+Convolutional Autoencoder,28.2101,0.6679
+Median Filter,27.4402,0.5317
+Bilateral Filter,25.8148,0.5071
+No Denoising (Noisy Input),20.2843,0.2020
