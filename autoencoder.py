@@ -1,21 +1,4 @@
-"""
-autoencoder.py
---------------
-A small convolutional autoencoder for image denoising.
 
-Architecture idea: the ENCODER progressively downsamples the noisy
-patch through convolution + max-pooling, forcing the network to
-compress the image into a compact feature representation that
-captures structure but discards noise (noise, being random, doesn't
-compress well and gets dropped). The DECODER then upsamples that
-representation back to full resolution, reconstructing a clean
-version of the patch.
-
-This is intentionally small (a handful of conv layers) since it is
-trained on 32x32 patches for a portfolio-scale project -- production
-denoising networks (e.g. DnCNN) are deeper and trained on much larger
-datasets.
-"""
 
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -56,16 +39,7 @@ def train_autoencoder(noisy_patches, clean_patches, epochs=15, batch_size=64):
 
 
 def denoise_full_image(model, image, patch_size=32, stride=16):
-    """Apply a patch-trained autoencoder to a full-resolution image.
-
-    Non-overlapping tiling causes visible grid artifacts at patch
-    boundaries (each patch is denoised independently, so neighboring
-    patches don't agree at the seam). To avoid this we instead use
-    OVERLAPPING patches (stride < patch_size) and average every pixel
-    across all the patch predictions that covered it -- this blends
-    the seams smoothly, the same idea as overlap-add reconstruction
-    in classical signal processing.
-    """
+   
     import numpy as np
 
     h, w = image.shape
