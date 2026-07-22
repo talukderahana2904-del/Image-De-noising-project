@@ -1,15 +1,3 @@
-"""
-data.py
--------
-Loads grayscale sample images, builds a small training set of
-(clean, noisy) patch pairs for the autoencoder, and provides a
-held-out test image for the final comparison.
-
-No external dataset download is required -- we use the sample
-images that ship with scikit-image, so the whole project runs
-offline.
-"""
-
 import numpy as np
 from skimage import data, color, img_as_float
 from skimage.transform import resize
@@ -17,9 +5,7 @@ from skimage.util import view_as_windows
 
 
 def load_grayscale_images():
-    """Return a list of grayscale float images in [0, 1] from skimage's
-    built-in sample gallery. Using several different images (rather than
-    one) gives the autoencoder more variety to generalize from."""
+   
     sources = [
         data.astronaut(),
         data.chelsea(),
@@ -35,26 +21,21 @@ def load_grayscale_images():
 
 
 def add_gaussian_noise(image, sigma=0.1, seed=None):
-    """Add zero-mean Gaussian noise with std `sigma` to an image in [0, 1].
-    This simulates sensor / low-light noise, a common denoising benchmark."""
+   
     rng = np.random.default_rng(seed)
     noisy = image + rng.normal(0, sigma, image.shape)
     return np.clip(noisy, 0.0, 1.0)
 
 
 def extract_patches(image, patch_size=32, stride=16):
-    """Slice an image into overlapping square patches. Autoencoders are
-    trained on small patches rather than full images so that a single
-    compact network can learn local noise-removal patterns that transfer
-    to images of any size at inference time."""
+   
     windows = view_as_windows(image, (patch_size, patch_size), step=stride)
     patches = windows.reshape(-1, patch_size, patch_size)
     return patches
 
 
 def build_training_set(patch_size=32, stride=16, sigma=0.1, seed=42):
-    """Build (noisy_patches, clean_patches) training arrays from every
-    training image except the one reserved for final testing."""
+   
     images = load_grayscale_images()
     train_images, test_image = images[:-1], images[-1]
 
