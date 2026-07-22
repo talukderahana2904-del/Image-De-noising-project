@@ -1,19 +1,3 @@
-"""
-main.py
--------
-End-to-end pipeline for the "Image Denoising using Traditional DSP
-Filters and Autoencoder" project:
-
-  1. Build a training set of (noisy, clean) patches from sample images.
-  2. Train a small convolutional autoencoder to denoise patches.
-  3. Take a held-out test image, add Gaussian noise to it.
-  4. Denoise it with four traditional DSP filters AND the autoencoder.
-  5. Score every method against the clean ground truth using PSNR/SSIM.
-  6. Save a comparison table (CSV) and a side-by-side visual figure.
-
-Run with:  python3 main.py
-"""
-
 import os
 import numpy as np
 import pandas as pd
@@ -47,9 +31,7 @@ def main():
 
     print("[4/5] Running traditional DSP filters + autoencoder on test image...")
     results = apply_all_filters(noisy_test)
-    results["Convolutional Autoencoder"] = denoise_full_image(
-        model, noisy_test, patch_size=PATCH_SIZE
-    )
+    results["Convolutional Autoencoder"] = denoise_full_image(model, noisy_test, patch_size=PATCH_SIZE)
 
     print("[5/5] Scoring every method with PSNR / SSIM...")
     # Include the untouched noisy image as a baseline row
@@ -70,13 +52,10 @@ def main():
 
 
 def save_visual_comparison(clean, noisy, results, df):
-    """Side-by-side figure: clean, noisy, and every denoised result,
-    each labeled with its PSNR/SSIM score."""
     methods = ["No Denoising (Noisy Input)"] + list(results.keys())
     images = [noisy] + list(results.values())
 
-    n = len(images) + 1  # +1 for the clean reference
-    cols = 3
+    n = len(images) + 1 
     rows = int(np.ceil(n / cols))
     fig, axes = plt.subplots(rows, cols, figsize=(4 * cols, 4 * rows))
     axes = axes.flatten()
@@ -104,23 +83,18 @@ def save_visual_comparison(clean, noisy, results, df):
 
 def save_metric_bar_chart(df):
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
-
     df["PSNR"].plot(kind="bar", ax=axes[0], color="steelblue")
     axes[0].set_title("PSNR by Method (higher = better)")
     axes[0].set_ylabel("PSNR (dB)")
     axes[0].tick_params(axis="x", rotation=40)
-
     df["SSIM"].plot(kind="bar", ax=axes[1], color="seagreen")
     axes[1].set_title("SSIM by Method (higher = better)")
     axes[1].set_ylabel("SSIM")
     axes[1].tick_params(axis="x", rotation=40)
-
     plt.tight_layout()
     out_path = os.path.join(OUTPUT_DIR, "metric_bar_chart.png")
     plt.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"Saved metric bar chart to {out_path}")
-
-
 if __name__ == "__main__":
     main()
